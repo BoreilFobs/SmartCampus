@@ -21,6 +21,9 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Handle an incoming authentication request.
+     *
+     * Redirects admin users to the admin dashboard,
+     * and regular users to the user dashboard.
      */
     public function store(LoginRequest $request): RedirectResponse
     {
@@ -28,6 +31,12 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Check if authenticated user is an admin
+        if (Auth::user()->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
+        }
+
+        // Regular user redirect
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

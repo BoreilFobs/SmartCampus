@@ -15,11 +15,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed academic levels (HND 1, HND 2, Bachelor)
+        $this->call([
+            LevelSeeder::class,
+        ]);
+
+        // Optionally create test users
         // User::factory(10)->create();
 
+        // Create a default admin user
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@smartcampus.com',
+            'is_admin' => true,
         ]);
+
+        $this->command->info('✓ Database seeding completed successfully!');
     }
 }
+
