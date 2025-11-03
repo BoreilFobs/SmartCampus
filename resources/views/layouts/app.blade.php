@@ -577,9 +577,9 @@
         <nav class="sidebar-content">
             <ul class="sidebar-menu">
                 <li><a href="{{ route('home') }}" class="active"><i class="bi bi-house-door"></i> Home</a></li>
-                <li><a href="#courses"><i class="bi bi-collection"></i> Courses</a></li>
+                {{-- <li><a href="#courses"><i class="bi bi-collection"></i> Courses</a></li>
                 <li><a href="#levels"><i class="bi bi-layers"></i> Levels</a></li>
-                <li><a href="#categories"><i class="bi bi-tags"></i> Categories</a></li>
+                <li><a href="#categories"><i class="bi bi-tags"></i> Categories</a></li> --}}
             </ul>
         </nav>
     </div>

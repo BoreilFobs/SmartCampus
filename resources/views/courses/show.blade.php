@@ -27,20 +27,18 @@
 
             <!-- Notes Section -->
             <div class="card fade-in-up" data-animate>
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">
                         <i class="bi bi-file-text"></i> Notes & Summary
                     </h5>
+                    <a href="#" id="downloadPdf" class="btn btn-sm btn-primary" style="display: none;" target="_blank">
+                        <i class="bi bi-download"></i> Download PDF
+                    </a>
                 </div>
                 <div class="card-body">
                     <div id="notesContent">
                         <p class="text-secondary">Select a video to view its notes and summaries.</p>
                     </div>
-                </div>
-                <div class="card-footer" id="notesFooter" style="display: none;">
-                    <a href="#" id="downloadPdf" class="btn btn-sm btn-primary" target="_blank">
-                        <i class="bi bi-download"></i> Download PDF
-                    </a>
                 </div>
             </div>
         </div>
@@ -85,12 +83,25 @@
                 </h6>
                 <div id="playlist" class="playlist">
                     @forelse($videos as $index => $video)
+                        @php
+                            // Prepare notes data
+                            $notesData = [];
+                            if ($video->notes) {
+                                foreach ($video->notes as $note) {
+                                    $notesData[] = [
+                                        'content' => $note->content,
+                                        'pdf_url' => $note->pdf_url
+                                    ];
+                                }
+                            }
+                        @endphp
                         <div 
                             class="playlist-item {{ $index === 0 ? 'active' : '' }}" 
                             data-video-id="{{ $video->id }}"
                             data-video-url="{{ asset('storage/' . $video->video_path) }}"
                             data-video-title="{{ $video->title }}"
                             data-video-description="{{ $video->description }}"
+                            data-notes="{{ json_encode($notesData) }}"
                             onclick="playVideo(this)"
                         >
                             <div class="d-flex align-items-center">
@@ -149,8 +160,65 @@
 
         currentVideoIndex = Array.from(playlistItems).indexOf(element);
 
+        // Load notes for this video
+        loadVideoNotes(videoId);
+
         if (window.innerWidth < 768) {
             document.getElementById('courseVideo').scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function loadVideoNotes(videoId) {
+        const notesContent = document.getElementById('notesContent');
+        const downloadPdf = document.getElementById('downloadPdf');
+
+        // Show loading state
+        notesContent.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div> Loading notes...';
+        downloadPdf.style.display = 'none';
+
+        // Fetch notes from the video element's data attributes
+        const videoElement = document.querySelector(`[data-video-id="${videoId}"]`);
+        const videoData = {
+            notes: videoElement.getAttribute('data-notes') || '[]',
+            pdfUrl: videoElement.getAttribute('data-pdf-url') || ''
+        };
+
+        try {
+            const notes = JSON.parse(videoData.notes);
+
+            if (notes.length === 0) {
+                notesContent.innerHTML = '<p class="text-secondary">No notes available for this video.</p>';
+                downloadPdf.style.display = 'none';
+                return;
+            }
+
+            // Display notes content (summary)
+            let notesHtml = '';
+            let hasPdf = false;
+
+            notes.forEach(note => {
+                if (note.content) {
+                    notesHtml += `<div class="mb-3">${note.content}</div>`;
+                }
+                if (note.pdf_url) {
+                    hasPdf = true;
+                    downloadPdf.href = note.pdf_url;
+                    downloadPdf.setAttribute('download', '');
+                }
+            });
+
+            if (notesHtml) {
+                notesContent.innerHTML = notesHtml;
+            } else {
+                notesContent.innerHTML = '<p class="text-secondary">No summary available for this video.</p>';
+            }
+
+            // Show download button only if PDF exists
+            downloadPdf.style.display = hasPdf ? 'block' : 'none';
+
+        } catch (e) {
+            notesContent.innerHTML = '<p class="text-secondary">No notes available for this video.</p>';
+            downloadPdf.style.display = 'none';
         }
     }
 
@@ -177,7 +245,10 @@
     });
 
     document.addEventListener('DOMContentLoaded', () => {
-        playlistItems[0]?.click();
+        const firstVideoElement = playlistItems[0];
+        if (firstVideoElement) {
+            firstVideoElement.click();
+        }
     });
 </script>
 @endsection
