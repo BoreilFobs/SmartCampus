@@ -1,3 +1,11 @@
+<IfModule mod_php.c>
+    php_value post_max_size 500M
+    php_value upload_max_filesize 500M
+    php_value memory_limit 512M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -22,4 +30,8 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+</IfModule>
+
+<IfModule mod_ssl.c>
+    SSLRenegBufferSize 10486100
 </IfModule>

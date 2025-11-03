@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
 
@@ -51,11 +51,11 @@ class Video extends Model
     }
 
     /**
-     * Get the note for this video.
+     * Get the notes for this video.
      */
-    public function note(): HasOne
+    public function notes(): HasMany
     {
-        return $this->hasOne(Note::class);
+        return $this->hasMany(Note::class);
     }
 
     /**
@@ -168,10 +168,10 @@ class Video extends Model
     }
 
     /**
-     * Check if video has a note.
+     * Check if video has any notes.
      */
-    public function hasNote(): bool
+    public function hasNotes(): bool
     {
-        return $this->note()->exists();
+        return $this->notes()->exists();
     }
 }

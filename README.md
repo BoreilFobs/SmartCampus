@@ -4,7 +4,7 @@
 ![PHP](https://img.shields.io/badge/PHP-8.2+-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-**SmartCampus** is a simple, public educational platform designed to help students access quality learning materials through video lessons and concise study notes. Built with Laravel and Tailwind CSS, it provides an intuitive interface for browsing courses by academic level without requiring user registration.
+**SmartCampus** is a simple, public educational platform designed to help students access quality learning materials through video lessons and concise study notes. Built with Laravel and Bootstrap 5, it provides an intuitive interface for browsing courses by academic level without requiring user registration.
 
 ---
 
@@ -101,7 +101,7 @@ Create a free, accessible learning platform where students pursuing HND (Higher 
 ## 🛠️ Technology Stack
 
 - **Backend:** Laravel 11.x
-- **Frontend:** Blade Templates + Tailwind CSS
+- **Frontend:** Blade Templates + Bootstrap 5
 - **Database:** SQLite (development) / MySQL (production)
 - **Authentication:** Laravel Breeze
 - **File Storage:** VPS Local Storage (no S3/cloud)
@@ -165,7 +165,7 @@ SmartCampus/
 │   │       ├── course-card.blade.php
 │   │       └── video-player.blade.php
 │   └── css/
-│       └── app.css (Tailwind)
+│       └── app.css (Bootstrap)
 ├── routes/
 │   ├── web.php
 │   └── admin.php
@@ -206,6 +206,7 @@ composer install
 ```bash
 npm install
 ```
+Note: Bootstrap is now included via CDN links in the templates, so you don't need to run npm build for basic styling to work!
 
 4. **Environment configuration**
 ```bash
@@ -248,7 +249,7 @@ sudo apt-get install ffmpeg -y
 brew install ffmpeg
 ```
 
-9. **Build frontend assets**
+9. **Build frontend assets (optional - mainly for JavaScript)**
 ```bash
 npm run dev
 # Or for production:

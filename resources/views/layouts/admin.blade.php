@@ -11,242 +11,260 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            font-family: 'Figtree', sans-serif;
+        }
+        .nav-link.active {
+            background-color: rgba(0, 0, 0, 0.1) !important;
+            font-weight: 600;
+        }
+        .nav-link:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 0.375rem;
+        }
+        main {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+        }
+        @media (min-width: 992px) {
+            main {
+                margin-left: 250px;
+            }
+            aside {
+                position: relative !important;
+                width: 250px;
+                margin-top: 0 !important;
+                transform: none !important;
+                display: block !important;
+            }
+            .overlay {
+                display: none !important;
+            }
+            .navbar-toggler {
+                display: none !important;
+            }
+        }
+        @media (max-width: 991.98px) {
+            aside {
+                position: fixed;
+                left: -250px;
+                transition: left 0.3s ease-in-out;
+                z-index: 1020;
+            }
+            aside.show {
+                left: 0;
+            }
+            .sidebar-scroll {
+                max-height: calc(100vh - 56px);
+            }
+        }
+        
+        /* Responsive padding and margins */
+        @media (max-width: 576px) {
+            .navbar-brand {
+                font-size: 1rem;
+            }
+            .container-fluid {
+                padding: 0.5rem;
+            }
+        }
+        
+        /* Smooth transitions */
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+    </style>
 </head>
-<body class="font-sans antialiased bg-gray-100">
-    <div class="min-h-screen">
+<body class="bg-light">
+    <div class="d-flex flex-column min-vh-100">
         <!-- Admin Navigation -->
-        <nav class="bg-gray-800 border-b border-gray-700 fixed w-full z-30">
-            <div class="px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <!-- Mobile menu button -->
-                        <button @click="sidebarOpen = !sidebarOpen" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white transition duration-150 ease-in-out mr-2">
-                            <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                <path :class="{'hidden': sidebarOpen, 'inline-flex': !sidebarOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                <path :class="{'hidden': !sidebarOpen, 'inline-flex': sidebarOpen }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary sticky-top">
+            <div class="container-fluid px-2 px-sm-3">
+                <!-- Mobile menu button -->
+                <button @click="sidebarOpen = !sidebarOpen" class="navbar-toggler" type="button" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Logo -->
+                <a href="{{ route('admin.dashboard') }}" class="navbar-brand ms-2 ms-sm-0 fw-bold">
+                    <i class="bi bi-mortarboard-fill me-2"></i><span class="d-none d-sm-inline">SmartCampus</span> Admin
+                </a>
+
+                <!-- Settings Dropdown -->
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <span class="text-muted text-sm me-2 d-none d-lg-block small">{{ Auth::user()->name }}</span>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="adminDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle me-1"></i><span class="d-none d-sm-inline">{{ Auth::user()->name }}</span>
                         </button>
-
-                        <!-- Logo -->
-                        <div class="shrink-0 flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="text-white text-xl font-bold">
-                                🎓 SmartCampus Admin
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Settings Dropdown -->
-                    <div class="flex items-center">
-                        <span class="text-gray-400 text-sm mr-4 hidden sm:block">Admin Mode</span>
-                        <x-dropdown align="right" width="48">
-                            <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-400 bg-gray-900 hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
-                                    <div>{{ Auth::user()->name }}</div>
-
-                                    <div class="ml-1">
-                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </button>
-                            </x-slot>
-
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('dashboard')">
-                                    {{ __('User Dashboard') }}
-                                </x-dropdown-link>
-
-                                <x-dropdown-link :href="route('profile.edit')">
-                                    {{ __('Profile') }}
-                                </x-dropdown-link>
-
-                                <!-- Authentication -->
-                                <form method="POST" action="{{ route('logout') }}">
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="{{ route('dashboard') }}"><i class="bi bi-speedometer2 me-2"></i>{{ __('User Dashboard') }}</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}"><i class="bi bi-person-gear me-2"></i>{{ __('Profile') }}</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form method="POST" action="{{ route('logout') }}" class="d-inline">
                                     @csrf
-
-                                    <x-dropdown-link :href="route('logout')"
-                                            onclick="event.preventDefault();
-                                                        this.closest('form').submit();">
-                                        {{ __('Log Out') }}
-                                    </x-dropdown-link>
+                                    <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                                            onclick="event.preventDefault(); this.closest('form').submit();">
+                                        <i class="bi bi-box-arrow-left me-2"></i>{{ __('Log Out') }}
+                                    </a>
                                 </form>
-                            </x-slot>
-                        </x-dropdown>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </nav>
 
-        <!-- Sidebar -->
-        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" 
-               class="fixed left-0 top-16 h-full w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-20 lg:translate-x-0 overflow-y-auto">
-            <nav class="mt-5 px-2 space-y-1">
-                <!-- Dashboard -->
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md {{ request()->routeIs('admin.dashboard') ? 'bg-gray-100 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
-                    <svg class="mr-3 h-6 w-6 {{ request()->routeIs('admin.dashboard') ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                    </svg>
-                    Dashboard
-                </a>
+        <div class="d-flex flex-row flex-grow-1">
+            <!-- Sidebar -->
+            <aside class="bg-white shadow-sm position-fixed position-lg-relative top-0 start-0 h-100 sidebar-scroll"
+                   :class="sidebarOpen ? 'show' : ''"
+                   style="width: 250px; z-index: 1020; overflow-y: auto; transition: transform 0.3s ease-in-out; margin-top: 0;"
+                   @click.away="sidebarOpen = false">
+                <nav class="nav flex-column p-3">
+                    <!-- Dashboard -->
+                    <a href="{{ route('admin.dashboard') }}" 
+                       class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : 'text-dark' }} mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-house-fill me-2"></i>Dashboard
+                    </a>
 
-                <!-- Divider -->
-                <div class="border-t border-gray-200 my-3"></div>
-                <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Content Management</p>
+                    <!-- Divider -->
+                    <div class="border-top border-secondary my-2"></div>
+                    <small class="text-secondary fw-bold text-uppercase ms-2 d-block my-2">Content Management</small>
 
-                <!-- Levels Management -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <svg class="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    Manage Levels
-                </a>
+                    <!-- Levels Management -->
+                    <a href="{{ route('admin.levels.index') }}" 
+                       class="nav-link {{ request()->routeIs('admin.levels.*') ? 'active' : 'text-dark' }} mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-bookmark-fill me-2"></i>Manage Levels
+                    </a>
 
-                <!-- Courses Management -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <svg class="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                    </svg>
-                    Manage Courses
-                </a>
+                    <!-- Courses Management -->
+                    <a href="{{ route('admin.courses.index') }}" 
+                       class="nav-link {{ request()->routeIs('admin.courses.*') ? 'active' : 'text-dark' }} mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-book-fill me-2"></i>Manage Courses
+                    </a>
 
-                <!-- Videos Management -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <svg class="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                    Manage Videos
-                </a>
+                    <!-- Videos Management -->
+                    <a href="{{ route('admin.videos.index') }}" 
+                       class="nav-link {{ request()->routeIs('admin.videos.*') ? 'active' : 'text-dark' }} mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-film me-2"></i>Manage Videos
+                    </a>
 
-                <!-- Notes Management -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <svg class="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Manage Notes
-                </a>
+                    <!-- Notes Management -->
+                    <a href="{{ route('admin.notes.index') }}" 
+                       class="nav-link {{ request()->routeIs('admin.notes.*') ? 'active' : 'text-dark' }} mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-file-earmark-text-fill me-2"></i>Manage Notes
+                    </a>
 
-                <!-- Divider -->
-                <div class="border-t border-gray-200 my-3"></div>
-                <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Quick Actions</p>
+                    <!-- Divider -->
+                    <div class="border-top border-secondary my-2"></div>
+                    <small class="text-secondary fw-bold text-uppercase ms-2 d-block my-2">Quick Actions</small>
 
-                <!-- Add Course -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-blue-50 hover:text-blue-700">
-                    <svg class="mr-3 h-6 w-6 text-blue-400 group-hover:text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add New Course
-                </a>
+                    <!-- Add Course -->
+                    <a href="{{ route('admin.courses.create') }}" 
+                       class="nav-link text-dark mb-2 rounded d-flex align-items-center" style="color: #0d6efd !important;">
+                        <i class="bi bi-plus-circle-fill me-2"></i>Add New Course
+                    </a>
 
-                <!-- Upload Video -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-purple-50 hover:text-purple-700">
-                    <svg class="mr-3 h-6 w-6 text-purple-400 group-hover:text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                    </svg>
-                    Upload Video
-                </a>
+                    <!-- Upload Video -->
+                    <a href="{{ route('admin.videos.create') }}" 
+                       class="nav-link text-dark mb-2 rounded d-flex align-items-center" style="color: #198754 !important;">
+                        <i class="bi bi-cloud-upload-fill me-2"></i>Upload Video
+                    </a>
 
-                <!-- Create Note -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-green-50 hover:text-green-700">
-                    <svg class="mr-3 h-6 w-6 text-green-400 group-hover:text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Create Note
-                </a>
+                    <!-- Create Note -->
+                    <a href="{{ route('admin.notes.create') }}" 
+                       class="nav-link text-dark mb-2 rounded d-flex align-items-center" style="color: #0dcaf0 !important;">
+                        <i class="bi bi-pencil-square me-2"></i>Create Note
+                    </a>
 
-                <!-- Divider -->
-                <div class="border-t border-gray-200 my-3"></div>
-                <p class="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">System</p>
+                    <!-- Divider -->
+                    <div class="border-top border-secondary my-2"></div>
+                    <small class="text-secondary fw-bold text-uppercase ms-2 d-block my-2">System</small>
 
-                <!-- Users Management -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <svg class="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    Users
-                </a>
+                    <!-- Users Management -->
+                    <a href="#" 
+                       class="nav-link text-dark mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-people-fill me-2"></i>Users
+                    </a>
 
-                <!-- Settings -->
-                <a href="#" 
-                   class="group flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900">
-                    <svg class="mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    Settings
-                </a>
+                    <!-- Settings -->
+                    <a href="#" 
+                       class="nav-link text-dark mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-gear-fill me-2"></i>Settings
+                    </a>
 
-                <!-- Storage Info -->
-                <div class="px-3 py-4 mt-4 bg-gray-50 rounded-md">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Storage</p>
-                    <div class="flex items-center justify-between text-sm">
-                        <span class="text-gray-600">Used</span>
-                        <span class="font-semibold text-gray-900">0 GB</span>
+                    <!-- Storage Info -->
+                    <div class="bg-light rounded p-3 mt-4">
+                        <small class="fw-bold text-secondary text-uppercase">Storage Usage</small>
+                        <div class="d-flex justify-content-between small mt-2">
+                            <span class="text-muted">Used</span>
+                            <span class="fw-bold">0 GB</span>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-primary" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted">Unlimited</small>
                     </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                        <div class="bg-blue-600 h-2 rounded-full" style="width: 0%"></div>
-                    </div>
+                </nav>
+            </aside>
+
+            <!-- Overlay for mobile -->
+            <div class="overlay position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"
+                 x-show="sidebarOpen"
+                 @click="sidebarOpen = false"
+                 style="z-index: 1010; display: none; transition: opacity 0.3s ease-in-out;"
+                 @click.away="sidebarOpen = false">
+            </div>
+
+            <!-- Main Content Area -->
+            <main class="flex-grow-1">
+                <!-- Page Heading -->
+                @hasSection('header')
+                    <header class="bg-white shadow-sm py-4 px-4 border-bottom">
+                        <div class="container-fluid">
+                            @yield('header')
+                        </div>
+                    </header>
+                @endif
+
+                <!-- Page Content -->
+                <div class="container-fluid py-3 py-md-4 px-2 px-sm-3 px-md-4">
+                    <!-- Display Success/Error Messages -->
+                    @if (session('success'))
+                        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>Success!</strong> {{ session('success') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @if (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                            <i class="bi bi-exclamation-circle-fill me-2"></i>
+                            <strong>Error!</strong> {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    @endif
+
+                    @yield('content')
                 </div>
-            </nav>
-        </aside>
-
-        <!-- Overlay for mobile -->
-        <div x-show="sidebarOpen" 
-             @click="sidebarOpen = false"
-             x-transition:enter="transition-opacity ease-linear duration-300"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition-opacity ease-linear duration-300"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             class="fixed inset-0 bg-gray-600 bg-opacity-75 z-10 lg:hidden"
-             style="display: none;">
-        </div>
-
-        <!-- Main Content Area -->
-        <div class="lg:pl-64 pt-16">
-            <!-- Page Heading -->
-            @hasSection('header')
-                <header class="bg-white shadow">
-                    <div class="px-4 sm:px-6 lg:px-8 py-6">
-                        @yield('header')
-                    </div>
-                </header>
-            @endif
-
-            <!-- Page Content -->
-            <main>
-                <!-- Display Success/Error Messages -->
-                @if (session('success'))
-                    <div class="px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                            <span class="block sm:inline">{{ session('success') }}</span>
-                        </div>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div class="px-4 sm:px-6 lg:px-8 mt-4">
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <span class="block sm:inline">{{ session('error') }}</span>
-                        </div>
-                    </div>
-                @endif
-
-                @yield('content')
             </main>
         </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Alpine JS -->
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </body>
 </html>
 
