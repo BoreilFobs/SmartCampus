@@ -75,6 +75,22 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the class bookings made by this student.
+     */
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(ClassBooking::class, 'student_id');
+    }
+
+    /**
+     * Get the class bookings managed by this admin.
+     */
+    public function managedBookings(): HasMany
+    {
+        return $this->hasMany(ClassBooking::class, 'admin_id');
+    }
+
+    /**
      * Check if user is an administrator.
      */
     public function isAdmin(): bool

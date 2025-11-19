@@ -21,17 +21,17 @@
     <style>
         :root {
             --primary-color: #4a9eff;
-            --secondary-color: #4a9eff;
+            --secondary-color: #6c63ff;
             --accent-color: #6c757d;
-            --dark-bg: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --dark-light: #3a3a3a;
-            --text-primary: #e0e0e0;
-            --text-secondary: #a0a0a0;
-            --border-color: #444444;
-            --success-color: #6fa86f;
-            --warning-color: #d4a56a;
-            --danger-color: #c97070;
+            --dark-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --dark-light: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
         }
         
         * {
@@ -42,43 +42,26 @@
             background-color: var(--dark-bg);
             color: var(--text-primary);
             overflow-x: hidden;
+            padding-bottom: 70px; /* Space for bottom tabs on mobile */
         }
         
-        /* Navigation Styles */
+        /* Hide navbar */
         .navbar {
-            background: #1a1a1a;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid var(--border-color);
+            display: none;
         }
         
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: #4a9eff !important;
-        }
-        
-        .nav-link {
-            color: var(--text-secondary) !important;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover,
-        .nav-link.active {
-            color: #4a9eff !important;
-        }
+        /* Navigation Styles - REMOVED */
         
         /* Sidebar Styles */
         .sidebar {
-            background: #1a1a1a;
+            background: #ffffff;
             min-height: 100vh;
             padding: 2rem 1rem;
             position: fixed;
             left: 0;
             top: 0;
             width: 250px;
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
             z-index: 100;
             border-right: 1px solid var(--border-color);
         }
@@ -118,29 +101,75 @@
         /* Mobile Tabs */
         .mobile-tabs {
             background: var(--card-bg);
-            border-bottom: 2px solid var(--border-color);
-            position: sticky;
-            top: 56px;
-            z-index: 90;
-            display: none;
+            border-top: 1px solid var(--border-color);
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .mobile-tabs .nav {
+            flex-wrap: nowrap;
+            width: 100%;
+            display: flex;
+        }
+        
+        .mobile-tabs .nav-item {
+            flex: 1;
+            text-align: center;
         }
         
         .mobile-tabs .nav-link {
             color: var(--text-secondary) !important;
             font-weight: 600;
             border-bottom: 3px solid transparent;
-            margin-bottom: -2px;
+            padding: 0.75rem 0.5rem;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            width: 100%;
         }
         
         .mobile-tabs .nav-link.active {
             color: #4a9eff !important;
             border-bottom-color: #4a9eff;
+            background-color: transparent;
+        }
+        
+        .mobile-tabs .nav-link i {
+            font-size: 1.2rem;
+        }
+        
+        .mobile-tabs .nav-link span {
+            font-size: 0.7rem;
+        }
+        
+        @media (min-width: 992px) {
+            .mobile-tabs {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 250px !important;
+                padding: 2rem !important;
+            }
+            
+            body {
+                padding-bottom: 0 !important;
+            }
         }
         
         /* Main Content */
         .main-content {
-            margin-left: 250px;
-            padding: 2rem;
+            margin-left: 0;
+            padding: 2rem 1rem;
+            min-height: 100vh;
         }
         
         /* Cards */
@@ -482,24 +511,7 @@
             }
         }
         
-        /* Footer */
-        footer {
-            background: #1a1a1a;
-            color: var(--text-primary);
-            padding: 2rem;
-            margin-top: 3rem;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
-        }
-        
-        footer a {
-            color: #4a9eff;
-            text-decoration: none;
-        }
-        
-        footer a:hover {
-            text-decoration: underline;
-        }
+        /* Footer - REMOVED */
         
         /* Utility Classes */
         .text-gradient {
@@ -534,6 +546,11 @@
                     </li>
                     @auth
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ route('bookings.index') }}">
+                                <i class="bi bi-calendar-check"></i> My Bookings
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <span class="nav-link text-white">Welcome, {{ Auth::user()->name }}</span>
                         </li>
                         @if(Auth::user()->is_admin)
@@ -561,9 +578,55 @@
     </nav>
     
     <!-- Mobile Tabs (shown only on mobile) -->
-    <div class="mobile-tabs d-lg-none">
+    <div class="mobile-tabs">
         <ul class="nav nav-tabs border-0" role="tablist">
-            @yield('mobile_tabs')
+            <li class="nav-item">
+                <a class="nav-link {{ request()->routeIs('home') || request()->routeIs('welcome') || request()->routeIs('level.show') || request()->routeIs('course.show') ? 'active' : '' }}" href="{{ route('home') }}">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span>Home</span>
+                </a>
+            </li>
+            @auth
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('bookings.index') ? 'active' : '' }}" href="{{ route('bookings.index') }}">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <span>Bookings</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('bookings.create') ? 'active' : '' }}" href="{{ route('bookings.create') }}">
+                        <i class="bi bi-calendar-plus-fill"></i>
+                        <span>Book</span>
+                    </a>
+                </li>
+                @if(Auth::user()->is_admin)
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.*') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Admin</span>
+                        </a>
+                    </li>
+                @endif
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('profile.edit') || request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('profile.edit') }}">
+                        <i class="bi bi-person-circle"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            @else
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route('login') }}">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Login</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('register') ? 'active' : '' }}" href="{{ route('register') }}">
+                        <i class="bi bi-person-plus-fill"></i>
+                        <span>Register</span>
+                    </a>
+                </li>
+            @endauth
         </ul>
     </div>
     
@@ -576,10 +639,46 @@
         </div>
         <nav class="sidebar-content">
             <ul class="sidebar-menu">
-                <li><a href="{{ route('home') }}" class="active"><i class="bi bi-house-door"></i> Home</a></li>
-                {{-- <li><a href="#courses"><i class="bi bi-collection"></i> Courses</a></li>
-                <li><a href="#levels"><i class="bi bi-layers"></i> Levels</a></li>
-                <li><a href="#categories"><i class="bi bi-tags"></i> Categories</a></li> --}}
+                <li>
+                    <a href="{{ route('home') }}" class="{{ request()->routeIs('home') || request()->routeIs('welcome') || request()->routeIs('level.show') || request()->routeIs('course.show') ? 'active' : '' }}">
+                        <i class="bi bi-house-door-fill"></i> Home
+                    </a>
+                </li>
+                @auth
+                    <li>
+                        <a href="{{ route('bookings.index') }}" class="{{ request()->routeIs('bookings.index') ? 'active' : '' }}">
+                            <i class="bi bi-calendar-check-fill"></i> My Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('bookings.create') }}" class="{{ request()->routeIs('bookings.create') ? 'active' : '' }}">
+                            <i class="bi bi-calendar-plus-fill"></i> Book a Class
+                        </a>
+                    </li>
+                    @if(Auth::user()->is_admin)
+                        <li>
+                            <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.*') ? 'active' : '' }}">
+                                <i class="bi bi-speedometer2"></i> Admin Dashboard
+                            </a>
+                        </li>
+                    @endif
+                    <li>
+                        <a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') || request()->routeIs('dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-person-circle"></i> Profile
+                        </a>
+                    </li>
+                @else
+                    <li>
+                        <a href="{{ route('login') }}" class="{{ request()->routeIs('login') ? 'active' : '' }}">
+                            <i class="bi bi-box-arrow-in-right"></i> Login
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('register') }}" class="{{ request()->routeIs('register') ? 'active' : '' }}">
+                            <i class="bi bi-person-plus-fill"></i> Register
+                        </a>
+                    </li>
+                @endauth
             </ul>
         </nav>
     </div>
@@ -605,14 +704,6 @@
         
         @yield('content')
     </div>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p class="mb-0">&copy; {{ date('Y') }} SmartCampus. All rights reserved.</p>
-            <p class="small mt-2">Making education accessible to all students worldwide.</p>
-        </div>
-    </footer>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

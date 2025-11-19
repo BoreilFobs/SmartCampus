@@ -5,39 +5,39 @@
 @section('description', $course->description . ' Learn with video lessons and comprehensive notes on SmartCampus.')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid px-3 px-md-4 py-4">
     <div class="row g-4">
         <!-- Video Player and Main Content -->
         <div class="col-lg-8 order-lg-1 order-2">
             <!-- Video Player -->
-            <div class="video-container fade-in-up" data-animate>
-                <video id="courseVideo" controls>
+            <div class="video-container mb-4" style="position: relative; width: 100%; background: #000; border-radius: 0.5rem; overflow: hidden;">
+                <video id="courseVideo" controls style="width: 100%; display: block;">
                     <source src="" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
 
             <!-- Video Info -->
-            <div class="card mb-4 fade-in-up" data-animate>
-                <div class="card-body">
-                    <h3 id="videoTitle" class="mb-3">Select a video to start</h3>
-                    <p id="videoDescription" class="text-secondary mb-0"></p>
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <h3 id="videoTitle" class="mb-3" style="color: #212529; font-weight: 600;">Select a video to start</h3>
+                    <p id="videoDescription" class="text-muted mb-0"></p>
                 </div>
             </div>
 
             <!-- Notes Section -->
-            <div class="card fade-in-up" data-animate>
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center bg-white">
+                    <h5 class="mb-0" style="color: #212529; font-weight: 600;">
                         <i class="bi bi-file-text"></i> Notes & Summary
                     </h5>
                     <a href="#" id="downloadPdf" class="btn btn-sm btn-primary" style="display: none;" target="_blank">
                         <i class="bi bi-download"></i> Download PDF
                     </a>
                 </div>
-                <div class="card-body">
-                    <div id="notesContent">
-                        <p class="text-secondary">Select a video to view its notes and summaries.</p>
+                <div class="card-body p-4">
+                    <div id="notesContent" style="color: #495057;">
+                        <p class="text-muted">Select a video to view its notes and summaries.</p>
                     </div>
                 </div>
             </div>
@@ -46,30 +46,30 @@
         <!-- Sidebar: Course Info and Playlist -->
         <div class="col-lg-4 order-lg-2 order-1">
             <!-- Course Info Card -->
-            <div class="card mb-4 sticky-top fade-in-up" data-animate style="top: 70px;">
-                <div class="card-header">
-                    <h5 class="mb-0">{{ $course->title }}</h5>
+            <div class="card mb-4 sticky-top border-0 shadow-sm" style="top: 70px;">
+                <div class="card-header" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none;">
+                    <h5 class="mb-0 text-white" style="font-weight: 600;">{{ $course->title }}</h5>
                 </div>
-                <div class="card-body">
-                    <p class="text-secondary mb-3">{{ $course->description }}</p>
+                <div class="card-body p-4">
+                    <p class="text-muted mb-3">{{ $course->description }}</p>
                     
                     <div class="mb-3">
-                        <small class="text-muted">
-                            <i class="bi bi-tag"></i> {{ $course->level->name }}
-                        </small>
+                        <span class="badge bg-light text-dark px-3 py-2">
+                            <i class="bi bi-tag-fill"></i> {{ $course->level->name }}
+                        </span>
                     </div>
 
                     <div class="row g-2 text-center">
                         <div class="col-6">
-                            <div class="p-3 bg-light rounded">
-                                <h6 class="text-primary mb-0" style="font-size: 1.3rem;">{{ $videos->count() }}</h6>
-                                <small class="text-secondary">Videos</small>
+                            <div class="p-3 rounded" style="background: #f8f9fa;">
+                                <h6 class="text-primary mb-0" style="font-size: 1.3rem; font-weight: 700;">{{ $videos->count() }}</h6>
+                                <small class="text-muted">Videos</small>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="p-3 bg-light rounded">
-                                <h6 class="text-primary mb-0" style="font-size: 1.3rem;">~{{ $videos->count() * 25 }}m</h6>
-                                <small class="text-secondary">Duration</small>
+                            <div class="p-3 rounded" style="background: #f8f9fa;">
+                                <h6 class="text-primary mb-0" style="font-size: 1.3rem; font-weight: 700;">~{{ $videos->count() * 25 }}m</h6>
+                                <small class="text-muted">Duration</small>
                             </div>
                         </div>
                     </div>
@@ -77,8 +77,8 @@
             </div>
 
             <!-- Playlist -->
-            <div class="fade-in-up" data-animate>
-                <h6 class="mb-3 fw-bold">
+            <div>
+                <h6 class="mb-3" style="color: #212529; font-weight: 600;">
                     <i class="bi bi-list-ul"></i> Course Videos
                 </h6>
                 <div id="playlist" class="playlist">
@@ -103,22 +103,23 @@
                             data-video-description="{{ $video->description }}"
                             data-notes="{{ json_encode($notesData) }}"
                             onclick="playVideo(this)"
+                            style="cursor: pointer; padding: 1rem; margin-bottom: 0.5rem; background: #fff; border: 1px solid #dee2e6; border-radius: 0.5rem; transition: all 0.3s ease;"
                         >
                             <div class="d-flex align-items-center">
-                                <span class="badge badge-primary me-2">{{ $index + 1 }}</span>
+                                <span class="badge bg-primary me-2" style="padding: 0.5rem 0.75rem;">{{ $index + 1 }}</span>
                                 <div class="flex-grow-1 min-width-0">
-                                    <div class="playlist-item-title text-truncate">
+                                    <div class="text-truncate" style="color: #212529; font-weight: 500; margin-bottom: 0.25rem;">
                                         {{ $video->title }}
                                     </div>
-                                    <div class="playlist-item-duration">
+                                    <div style="color: #6c757d; font-size: 0.875rem;">
                                         ~{{ $video->duration ?? 25 }} min
                                     </div>
                                 </div>
-                                <i class="bi bi-play-fill text-primary ms-2" style="display: none;"></i>
+                                <i class="bi bi-play-fill text-primary ms-2" style="display: none; font-size: 1.25rem;"></i>
                             </div>
                         </div>
                     @empty
-                        <p class="text-secondary text-center py-4">No videos available for this course.</p>
+                        <p class="text-muted text-center py-4">No videos available for this course.</p>
                     @endforelse
                 </div>
             </div>
@@ -135,6 +136,20 @@
         </div>
     </div>
 </div>
+
+<style>
+    .playlist-item:hover {
+        background: #f8f9fa !important;
+        border-color: #667eea !important;
+        transform: translateX(5px);
+    }
+    
+    .playlist-item.active {
+        background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%) !important;
+        border-color: #667eea !important;
+    }
+</style>
+
 <script>
     let currentVideoIndex = 0;
     const playlistItems = document.querySelectorAll('.playlist-item');

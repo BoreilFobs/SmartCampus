@@ -164,6 +164,12 @@
                         <i class="bi bi-file-earmark-text-fill me-2"></i>Manage Notes
                     </a>
 
+                    <!-- Class Bookings Management -->
+                    <a href="{{ route('admin.bookings.index') }}" 
+                       class="nav-link {{ request()->routeIs('admin.bookings.*') ? 'active' : 'text-dark' }} mb-2 rounded d-flex align-items-center">
+                        <i class="bi bi-calendar-check-fill me-2"></i>Class Bookings
+                    </a>
+
                     <!-- Divider -->
                     <div class="border-top border-secondary my-2"></div>
                     <small class="text-secondary fw-bold text-uppercase ms-2 d-block my-2">Quick Actions</small>
